@@ -140,3 +140,48 @@ def generate_meal_image(meal_type_korean: str, meal_content: str, date_display: 
     output_path = os.path.join(OUTPUTS_DIR, output_filename)
     image.save(output_path)
     return output_path
+
+def login_to_instagram() -> Client:
+    cl = Client()
+
+    if os.path.exists(SESSION_FILE_PATH):
+        try:
+            cl.load_settings(SESSION_FILE_PATH)
+            cl.login(IG_USERNAME, IG_PASSWORD)
+            print("기존 세션 로드 및 로그인 성공.")
+        except Exception as e:
+            print(f"세션 로드 실패: {e}. 재로그인 시도 중...")
+            cl.set_locale("ko_KR")
+            cl.set_timezone_offset(32400)
+            try:
+                cl.login(IG_USERNAME, IG_PASSWORD)
+                cl.dump_settings(SESSION_FILE_PATH)
+                print("재로그인 성공 및 세션 저장.")
+            except Exception as login_err:
+                print(f"[오류] 인스타그램 재로그인 실패: {login_err}")
+                exit(1)
+    else:
+        print("세션 파일 없음. 첫 로그인 시도 중...")
+        cl.set_locale("ko_KR")
+        cl.set_timezone_offset(32400)
+        try:
+            cl.login(IG_USERNAME, IG_PASSWORD)
+            cl.dump_settings(SESSION_FILE_PATH)
+            print("첫 로그인 성공 및 세션 저장.")
+        except Exception as first_login_err:
+            print(f"[오류] 인스타그램 첫 로그인 실패: {first_login_err}")
+            exit(1)
+
+    return cl
+
+def post_story(client: Client, image_path: str, caption: str):
+    if not os.path.exists(image_path):
+        print(f"[경고] {image_path} 파일이 없습니다. 업로드 건너뜀.")
+        return
+
+    try:
+        print(f"[업로드 중] {caption} (파일: {image_path})")
+        client.photo_upload_to_story(image_path, caption)
+        print(f"[업로드 완료] {caption}")
+    except Exception as e:
+        print(f"[오류] 스토리 업로드 실패: {e}")
