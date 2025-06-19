@@ -10,32 +10,31 @@ load_dotenv()
 
 # --- 설정 ---
 NEIS_API_KEY = os.getenv("NEIS_API_KEY")
-IG_USERNAME = os.getenv("IG_USERNAME")
-IG_PASSWORD = os.getenv("IG_PASSWORD")
+IG_USERNAME = os.getenv("INSTA_USERNAME")
+IG_PASSWORD = os.getenv("INSTA_PASSWORD")
 
 ATPT_OFCDC_SC_CODE = "K10"  # 강원도 교육청 코드
-SD_SCHUL_CODE = "7380292"   # 속초고등학교 학교 코드
+SD_SCHUL_CODE = "7801152"   # 속초고등학교 학교 코드
 NEIS_API_BASE_URL = "https://open.neis.go.kr/hub/mealServiceDietInfo"
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 ASSETS_DIR = os.path.join(BASE_DIR, "assets")
 OUTPUTS_DIR = os.path.join(BASE_DIR, "outputs")
 
-FONT_PATH = os.path.join(ASSETS_DIR, "Pretendard-Bold.otf")
-BACKGROUND_IMAGE_PATH = os.path.join(ASSETS_DIR, "sokgo_background.png")
+FONT_PATH = os.path.join(ASSETS_DIR, "BMJUA_otf.otf")
+BACKGROUND_IMAGE_PATH = os.path.join(ASSETS_DIR, "sokgo.png")
 SESSION_FILE_PATH = os.path.join(BASE_DIR, "session.json")
 
-TITLE_FONT_SIZE = 40
-DATE_FONT_SIZE = 30
-MEAL_TYPE_FONT_SIZE = 36
-BODY_FONT_SIZE = 32
-TEXT_COLOR = "black"
+DATE_FONT_SIZE = 40
+MEAL_TYPE_FONT_SIZE = 35
+BODY_FONT_SIZE = 50
 
-TITLE_Y_POS = 150
-DATE_Y_OFFSET_FROM_TITLE = 20
-MEAL_TYPE_Y_OFFSET_FROM_DATE = 50
-MEAL_CONTENT_Y_OFFSET_FROM_MEAL_TYPE = 40
-MEAL_LINE_SPACING = 45
+TEXT_COLOR = "#123D6A"
+
+DATE_Y_OFFSET_FROM_TITLE = 0
+MEAL_TYPE_Y_OFFSET_FROM_DATE = 30
+MEAL_CONTENT_Y_OFFSET_FROM_MEAL_TYPE = 60
+MEAL_LINE_SPACING = 80
 
 os.makedirs(OUTPUTS_DIR, exist_ok=True)
 
@@ -111,7 +110,7 @@ def generate_meal_image(meal_type_korean: str, meal_content: str, date_display: 
     image_width, image_height = image.size
 
     # 날짜 텍스트
-    date_start_y = 220
+    date_start_y = 420
     date_bbox = draw.textbbox((0, 0), date_display, font=date_font)
     date_width = date_bbox[2] - date_bbox[0]
     date_x = (image_width - date_width) // 2
