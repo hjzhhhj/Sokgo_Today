@@ -185,3 +185,51 @@ def post_story(client: Client, image_path: str, caption: str):
         print(f"[업로드 완료] {caption}")
     except Exception as e:
         print(f"[오류] 스토리 업로드 실패: {e}")
+
+def main_routine():
+    print("--- 속초고 급식 스토리 봇 실행 시작 ---")
+
+    today_date_ymd = datetime.date.today().strftime("%Y%m%d")
+    display_date_str = datetime.date.today().strftime("%Y년 %m월 %d일")
+    print(f"오늘 날짜: {display_date_str}")
+
+    print("급식 정보 가져오는 중...")
+    meals_data = get_meal_data(today_date_ymd)
+
+    print("인스타그램 로그인 중...")
+    instagram_client = login_to_instagram()
+
+    meal_types_korean = {
+        "breakfast": "조식",
+        "lunch": "중식",
+        "dinner": "석식"
+    }
+
+    for meal_key, meal_content in meals_data.items():
+        meal_type_korean = meal_types_korean.get(meal_key, meal_key)
+
+        if not meal_content or meal_content.strip() == "없음":
+            print(f"[건너뜀] {meal_type_korean} 급식 정보가 없습니다.")
+            continue
+
+        print(f"'{meal_type_korean}' 급식 이미지 생성 중...")
+        image_output_path = generate_meal_image(
+            meal_type_korean,
+            meal_content,
+            display_date_str
+        )
+
+        if not image_output_path:
+            print(f"[오류] '{meal_type_korean}' 이미지 생성 실패. 업로드 건너뜀.")
+            continue
+
+        print(f"'{meal_type_korean}' 이미지 저장 완료: {image_output_path}")
+
+        caption = f"속초고 {meal_type_korean} 🍽️"
+        post_story(instagram_client, image_output_path, caption)
+
+    print("--- 속초고 급식 스토리 봇 실행 완료 ---")
+
+
+if __name__ == "__main__":
+    main_routine()
